@@ -2,16 +2,16 @@ import { defineVitestConfig } from '@nuxt/test-utils/config'
 
 export default defineVitestConfig({
   test: {
-    globals: true,
+    // globals: true,
     environment: 'nuxt',
     setupFiles: ['./test/setup.ts'],
-    deps: {
-      inline: [/nuxt/],
-    },
-    environmentOptions: {
-      nuxt: {
-        domEnvironment: 'happy-dom',
-      },
-    },
+    // deps: {
+    //   inline: [/nuxt/],
+    // },
+    // environmentOptions: {
+    //   nuxt: {
+    //     domEnvironment: 'happy-dom',
+    //   },
+    // },
   },
 })

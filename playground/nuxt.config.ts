@@ -1,7 +1,7 @@
 export default defineNuxtConfig({
   modules: ['../src/module'],
   auth: {
-    baseURL: 'https://api.test.dev',
+    baseURL: 'http://localhost:4000/auth',
     endpoints: {
       signIn: { path: '/login', method: 'post' },
       signOut: { path: '/logout', method: 'post' },
@@ -12,7 +12,7 @@ export default defineNuxtConfig({
       type: 'Bearer',
       cookieName: 'auth.token',
       headerName: 'Authorization',
-      maxAgeInSeconds: 60 * 60,
+      maxAgeInSeconds: 60 * 60 * 24,
       sameSiteAttribute: 'lax',
       secureCookieAttribute: false,
       httpOnlyCookieAttribute: false,

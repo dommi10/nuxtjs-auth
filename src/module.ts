@@ -7,47 +7,7 @@ import {
   addTypeTemplate,
 } from '@nuxt/kit'
 import { defu } from 'defu'
-import type { methodType } from './runtime/utils/method'
-
-export interface ModuleOptions {
-  baseURL: string
-  endpoints: {
-    signIn: { path: string; method: methodType }
-    signOut: { path: string; method: methodType }
-    getSession: { path: string; method: methodType }
-  }
-  token: {
-    signInResponseTokenPointer: string
-    type?: string
-    cookieName: string
-    headerName: string
-    maxAgeInSeconds: number
-    sameSiteAttribute?: string
-    secureCookieAttribute?: boolean
-    httpOnlyCookieAttribute?: boolean
-  }
-  refresh?: {
-    endpoint: { path: string; method: methodType }
-    refreshOnlyToken?: boolean
-    token: {
-      signInResponseRefreshTokenPointer: string
-      refreshResponseTokenPointer: string
-      refreshRequestTokenPointer: string
-      cookieName: string
-      maxAgeInSeconds: number
-      sameSiteAttribute?: string
-      secureCookieAttribute?: boolean
-      httpOnlyCookieAttribute?: boolean
-    }
-  }
-  pages: {
-    login: string
-  }
-  session: {
-    dataType: Record<string, string>
-  }
-  refreshOnFocusChanged?: boolean
-}
+import type { ModuleOptions } from './runtime/types/module.types'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -66,6 +26,7 @@ export default defineNuxtModule<ModuleOptions>({
       signInResponseTokenPointer: '/access_token',
       type: 'Bearer',
       cookieName: 'auth.token',
+      sameSiteAttribute: 'lax',
       headerName: 'Authorization',
       maxAgeInSeconds: 60 * 60 * 24,
     },
@@ -94,37 +55,42 @@ export default defineNuxtModule<ModuleOptions>({
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
-    // expose config to runtime
+    // Expose the module config to runtimeConfig for both client and server access
     nuxt.options.runtimeConfig.public.auth = defu(
       nuxt.options.runtimeConfig.public.auth as Record<string, any>,
       options
     )
 
-    const runtimeDir = resolver.resolve('runtime') // 👈 on récupère le chemin vers runtime/
-
-    // types
+    // Add a types reference for IDE autocompletion in the Nuxt app
     nuxt.hook('prepare:types', opts => {
       opts.references.push({ path: resolver.resolve('runtime', 'types.d.ts') })
     })
 
-    const middlewarePath = resolver.resolve('runtime/middleware/auth')
+    const middlewarePath = resolver.resolve('runtime/middleware/auth.client')
     const pluginPath = resolver.resolve('runtime/plugins/auth')
     const refreshPluginPath = resolver.resolve('runtime/plugins/refresh-on-focus.client')
 
-    // Injecte tous les composables dans #imports
-    addImportsDir(resolver.resolve(runtimeDir, 'composables'))
+    // Expose all composables from the module to Nuxt's #imports
+    addImportsDir(resolver.resolve('runtime/composables'))
 
+    // Register the auth middleware
+    // If globalMiddleware is true (default), it applies to all pages
+    // Otherwise, the user can add it manually to pages/layouts via middleware: ['auth']
     addRouteMiddleware({
       name: 'auth',
       path: middlewarePath,
-      global: true,
+      global: options.globalMiddleware ?? false,
     })
+
+    // Register the main auth plugin
     addPlugin(pluginPath)
+
+    // Register the refresh-on-focus plugin if enabled (optional)
     if (options.refreshOnFocusChanged) {
       addPlugin(refreshPluginPath)
     }
 
-    // generate session type
+    // Dynamically generate the AuthSession type based on user config
     addTypeTemplate({
       filename: 'types/auth-session.d.ts',
       getContents: () => {
@@ -134,10 +100,5 @@ export default defineNuxtModule<ModuleOptions>({
         return `export interface AuthSession {\n${fields}\n}`
       },
     })
-
-    // Sauvegarde pour les types
-    nuxt.options.alias['@dommidev10/nuxt-auth'] = runtimeDir
-    // 👇 transpile le runtime
-    nuxt.options.build.transpile.push(resolver.resolve('runtime'))
   },
 })

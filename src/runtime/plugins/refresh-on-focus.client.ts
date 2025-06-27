@@ -27,7 +27,5 @@ export default defineNuxtPlugin(() => {
     }
   }
 
-  if (process.client) {
-    window.addEventListener('focus', onFocus)
-  }
+  window.addEventListener('focus', onFocus)
 })
