@@ -1,5 +1,6 @@
 export default defineNuxtConfig({
   modules: ['../src/module'],
+  devtools: { enabled: true },
   auth: {
     baseURL: 'http://localhost:4000/auth',
     endpoints: {
@@ -12,7 +13,7 @@ export default defineNuxtConfig({
       type: 'Bearer',
       cookieName: 'auth.token',
       headerName: 'Authorization',
-      maxAgeInSeconds: 60 * 60 * 24,
+      maxAgeInSeconds: 60,
       sameSiteAttribute: 'lax',
       secureCookieAttribute: false,
       httpOnlyCookieAttribute: false,
@@ -25,7 +26,7 @@ export default defineNuxtConfig({
         refreshResponseTokenPointer: '/access_token',
         refreshRequestTokenPointer: '/refresh_token',
         cookieName: 'auth.refresh_token',
-        maxAgeInSeconds: 60 * 60 * 24 * 7,
+        maxAgeInSeconds: 60 * 60 * 24 * 30, // 30 days
         sameSiteAttribute: 'lax',
         secureCookieAttribute: false,
         httpOnlyCookieAttribute: false,
@@ -42,5 +43,4 @@ export default defineNuxtConfig({
     },
     refreshOnFocusChanged: true,
   },
-  devtools: { enabled: true },
 })

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const { session, signIn, signOut, refresh, getSession, token } = useAuth()
 
-const credentials = ref({ phone: '243971955445', password: 'adminadmin', otp: '0256' })
+const credentials = ref({ phone: '243971955445', password: 'adminadmin', otp: '1868' })
 const loginError = ref('')
 const loading = ref(false)
 
@@ -10,8 +10,13 @@ async function handleLogin() {
   loginError.value = ''
   try {
     await signIn(credentials.value)
-  } catch (e: any) {
-    loginError.value = e?.message || 'Login failed'
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.error('Login error:', e.message)
+    } else {
+      const error = e as { message?: string }
+      loginError.value = error?.message || 'Login failed'
+    }
   }
   loading.value = false
 }
@@ -28,6 +33,7 @@ async function handleSession() {
   await getSession()
 }
 </script>
+
 <template>
   <div>
     <h2>Nuxt module playground!</h2>
@@ -40,11 +46,13 @@ async function handleSession() {
         Password:
         <input v-model="credentials.password" type="password" />
       </label>
-      <button @click="handleLogin" :disabled="loading">Login</button>
+      <button :disabled="loading" @click="handleLogin()">Login</button>
       <button @click="handleLogout">Logout</button>
       <button @click="handleRefresh">Refresh Token</button>
       <button @click="handleSession">Refresh Session</button>
-      <div v-if="loginError" style="color: red">{{ loginError }}</div>
+      <div v-if="loginError" style="color: red">
+        {{ loginError }}
+      </div>
     </div>
     <div>
       <h3>Session</h3>

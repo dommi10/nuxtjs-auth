@@ -1,8 +1,8 @@
-import { useCookie, useRuntimeConfig, useState, navigateTo } from '#imports'
 import deepGet from '../utils/deepGet'
-import type { AuthSession } from '#build/types/auth-session'
 import type { methodType } from '../utils/method'
 import type { ModuleOptions } from '../types/module.types'
+import type { AuthSession } from '#build/types/auth-session'
+import { useCookie, useRuntimeConfig, useState, navigateTo } from '#imports'
 
 /**
  * Provides authentication utilities for Nuxt apps.
@@ -15,8 +15,6 @@ import type { ModuleOptions } from '../types/module.types'
  * const { session, signIn, signOut, refresh, getSession, token } = useAuth()
  */
 export const useAuth = () => {
-  console.log('[nuxt-auth] useAuth loaded')
-
   /** @type {ModuleOptions} Auth configuration from runtimeConfig */
   const config = useRuntimeConfig().public.auth as ModuleOptions
 
@@ -58,8 +56,6 @@ export const useAuth = () => {
    */
   const session = useState<AuthSession | null>('auth:session', () => null)
 
-  console.log('[AUTH] loaded with url ', config.baseURL)
-
   /**
    * Signs in the user with given credentials.
    * Sets the access and refresh tokens, and loads the session.
@@ -71,6 +67,7 @@ export const useAuth = () => {
    * const { signIn } = useAuth()
    * await signIn({ username: 'john', password: 'secret' })
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const signIn = async (credentials: Record<string, any>) => {
     if (!config.endpoints.signIn) {
       console.warn('[Auth] signIn endpoint is missing in config.')
@@ -82,6 +79,7 @@ export const useAuth = () => {
       body: credentials,
     })
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const accessToken = deepGet(res as Record<string, any>, config.token.signInResponseTokenPointer)
     if (!accessToken) throw new Error('No access token found in response')
 
@@ -90,7 +88,7 @@ export const useAuth = () => {
     if (config.refresh?.token?.signInResponseRefreshTokenPointer) {
       const refreshVal = deepGet(
         res as Record<string, any>,
-        config.refresh?.token.signInResponseRefreshTokenPointer
+        config.refresh?.token.signInResponseRefreshTokenPointer,
       )
       refreshToken.value = refreshVal
     }
@@ -173,8 +171,9 @@ export const useAuth = () => {
     })
 
     const newAccessToken = deepGet(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       res as Record<string, any>,
-      config.refresh!.token.refreshResponseTokenPointer
+      config.refresh!.token.refreshResponseTokenPointer,
     )
     if (!newAccessToken) throw new Error('No refreshed access token')
 
@@ -203,7 +202,9 @@ export const useAuth = () => {
           [config.token.headerName]: token.value!,
         },
       })
-    } catch {}
+    } catch {
+      console.warn('[Auth] signOut failed, proceeding to clear session anyway')
+    }
     clearSession()
     navigateTo(config.pages.login)
   }

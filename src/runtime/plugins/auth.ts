@@ -1,6 +1,6 @@
-import { defineNuxtPlugin, useRuntimeConfig, useCookie } from '#imports'
-import { useAuth } from '../composables/useAuth'
 import { jwtDecode } from 'jwt-decode'
+import { useAuth } from '../composables/useAuth'
+import { defineNuxtPlugin, useRuntimeConfig, useCookie } from '#imports'
 
 export default defineNuxtPlugin(async () => {
   const config = useRuntimeConfig().public.auth
@@ -10,7 +10,7 @@ export default defineNuxtPlugin(async () => {
   const isTokenExpired = (jwt?: string | null): boolean => {
     if (!jwt) return true
     try {
-      const decoded: any = jwtDecode(jwt.replace(/^Bearer /, ''))
+      const decoded: { exp: number } = jwtDecode(jwt.replace(/^Bearer /, ''))
       return decoded.exp * 1000 < Date.now()
     } catch {
       return true

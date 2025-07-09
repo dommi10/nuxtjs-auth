@@ -30,13 +30,13 @@
     "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
     "lint": "eslint .",
     "test": "vitest run",
+    "format": "prettier --write .",
     "test:watch": "vitest watch",
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
     "@nuxt/kit": "^3.17.5",
-    "defu": "^6.1.4",
-    "eslint-config-prettier": "^10.1.5"
+    "defu": "^6.1.4"
   },
   "devDependencies": {
     "@nuxt/devtools": "^2.5.0",
@@ -48,9 +48,13 @@
     "@vue/test-utils": "^2.4.6",
     "changelogen": "^0.6.1",
     "eslint": "^9.29.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.1",
+    "eslint-plugin-vue": "^10.3.0",
     "happy-dom": "^18.0.1",
     "jsdom": "^26.1.0",
     "nuxt": "^3.17.5",
+    "prettier": "^3.6.2",
     "typescript": "~5.8.3",
     "vitest": "^3.2.4",
     "vue-tsc": "^2.2.10"

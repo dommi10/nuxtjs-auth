@@ -57,12 +57,13 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Expose the module config to runtimeConfig for both client and server access
     nuxt.options.runtimeConfig.public.auth = defu(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       nuxt.options.runtimeConfig.public.auth as Record<string, any>,
-      options
+      options,
     )
 
     // Add a types reference for IDE autocompletion in the Nuxt app
-    nuxt.hook('prepare:types', opts => {
+    nuxt.hook('prepare:types', (opts) => {
       opts.references.push({ path: resolver.resolve('runtime', 'types.d.ts') })
     })
 

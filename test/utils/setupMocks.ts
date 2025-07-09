@@ -10,7 +10,7 @@ beforeEach(() => {
         JSON.stringify({
           access_token: 'mocked_access_token',
           refresh_token: 'mocked_refresh_token',
-        })
+        }),
       )
     }
 
@@ -18,7 +18,7 @@ beforeEach(() => {
       return new Response(
         JSON.stringify({
           access_token: 'new_access_token',
-        })
+        }),
       )
     }
 
@@ -27,7 +27,7 @@ beforeEach(() => {
         JSON.stringify({
           id: 1,
           name: 'Shanie',
-        })
+        }),
       )
     }
 
@@ -36,10 +36,13 @@ beforeEach(() => {
     }
 
     return new Response(null, { status: 401 })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }) as any
 
   // Mock useCookie for all auth-related cookies
+
   vi.mock('#app', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const actual = await vi.importActual<any>('#app')
 
     return {

@@ -1,36 +1,5 @@
 // @vitest-environment nuxt
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-
-const mockConfig = {
-  public: {
-    auth: {
-      token: {
-        cookieName: 'auth.token',
-        type: 'Bearer',
-        signInResponseTokenPointer: '/access_token',
-        headerName: 'Authorization',
-      },
-      refresh: {
-        token: {
-          cookieName: 'auth.refresh_token',
-          signInResponseRefreshTokenPointer: '/refresh_token',
-          refreshResponseTokenPointer: '/refresh_token',
-          refreshRequestTokenPointer: '/refresh_token',
-        },
-        endpoint: { path: '/refresh', method: 'post' },
-        refreshOnlyToken: true,
-      },
-      endpoints: {
-        signIn: { path: '/login', method: 'post' },
-        signOut: { path: '/logout', method: 'post' },
-        getSession: { path: '/me', method: 'get' },
-      },
-      pages: { login: '/auth/login' },
-      baseURL: '',
-      session: { dataType: {} },
-    },
-  },
-}
+import { describe, it, expect, beforeEach } from 'vitest'
 
 describe('useAuth composable', () => {
   beforeEach(() => {

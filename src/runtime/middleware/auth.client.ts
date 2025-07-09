@@ -1,7 +1,7 @@
-import { defineNuxtRouteMiddleware, navigateTo, useRuntimeConfig } from '#imports'
 import { useAuth } from '../composables/useAuth'
+import { defineNuxtRouteMiddleware, navigateTo, useRuntimeConfig } from '#imports'
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware((to, _) => {
   const config = useRuntimeConfig().public.auth
   const { session } = useAuth()
 

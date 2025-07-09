@@ -5,6 +5,7 @@
  * @param path - A path string like 'data.token' or '/access_token'
  * @returns The value at that path, or undefined if not found
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function deepGet(obj: Record<string, any>, path?: string): any {
   if (!obj || typeof obj !== 'object' || !path) return undefined
 
